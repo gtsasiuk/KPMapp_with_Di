@@ -3,11 +3,10 @@ package com.example.kpmapp_with_di.data.about
 import kotlin.math.max
 import kotlin.math.min
 
-internal class AboutRepository {
+internal class AboutRepository(
+    private val platform: Platform
+) {
     fun getAbout(): List<Pair<String, String>> {
-
-        val platform = Platform()
-
         val items = mutableListOf(
             "Operating System" to "${platform.osName} ${platform.osVersion}",
             "Device" to platform.deviceModel,
