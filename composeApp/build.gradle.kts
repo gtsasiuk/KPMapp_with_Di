@@ -53,6 +53,11 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
+            implementation(libs.multiplatform.settings)
+            implementation(libs.kotlinx.serialization)
+            implementation(libs.multiplatform.settings.serialization)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.multiplatform.settings.coroutines)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
