@@ -35,6 +35,13 @@ internal class AboutViewModel(
         minute()
     }
 
+    val countState: StateFlow<Int> = repository.visitedCountObservable()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0
+        )
+
     private val _state = MutableStateFlow(AboutState())
     val state: StateFlow<AboutState> = _state.asStateFlow()
 
