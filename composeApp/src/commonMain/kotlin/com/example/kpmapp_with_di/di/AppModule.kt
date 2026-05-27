@@ -8,6 +8,7 @@ import com.example.kpmapp_with_di.ui.about.AboutViewModel
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.Settings
 import org.koin.core.module.dsl.singleOf
+import org.koin.plugin.module.dsl.create
 import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
@@ -17,11 +18,12 @@ import org.koin.plugin.module.dsl.viewModel
 private fun createSettings(): Settings = Settings()
 
 val dataModule = module {
-    single<Settings> { createSettings() } binds arrayOf(Settings::class, ObservableSettings::class)
+    single { create(::createSettings) } binds arrayOf(Settings::class, ObservableSettings::class)
     singleOf(::AppPreferences) bind Preferences::class
 }
 
 val appModule = module {
+    includes(dataModule)
     single<Platform>()
     single<AboutRepository>()
     viewModel<AboutViewModel>()

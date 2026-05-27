@@ -12,6 +12,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode.Companion.Color
 import androidx.compose.ui.unit.dp
@@ -27,7 +28,6 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun AboutScreen(
     onUpButtonClick: () -> Unit
 ) {
-
     val viewModel: AboutViewModel = koinViewModel()
 
     Column {
@@ -54,12 +54,23 @@ private fun Toolbar(onUpButtonClick: () -> Unit) {
 
 @Composable
 private fun AboutContent(viewModel: AboutViewModel) {
-
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LazyColumn {
-        items(state) { row ->
+        items(state.platformInfo) { row ->
             RowView(row.first, row.second)
+        }
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Visited ${state.visitedCount} times.")
+                Spacer(modifier = Modifier.height(4.dp))
+                Text("Last visited at ${state.visitedDate}.")
+            }
         }
     }
 }
