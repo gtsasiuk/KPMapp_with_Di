@@ -8,20 +8,22 @@ import com.example.kpmapp_with_di.data.common.db.DbDataSource
 import com.example.kpmapp_with_di.data.common.db.LocalDataSource
 import com.example.kpmapp_with_di.data.common.preferences.AppPreferences
 import com.example.kpmapp_with_di.data.common.preferences.Preferences
+import com.example.kpmapp_with_di.data.reminders.RemindersRepository
 import com.example.kpmapp_with_di.ui.about.AboutViewModel
+import com.example.kpmapp_with_di.ui.reminders.RemindersViewModel
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.Settings
 import org.koin.core.module.dsl.singleOf
-import org.koin.plugin.module.dsl.create
 import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
+import org.koin.plugin.module.dsl.create
 import org.koin.plugin.module.dsl.single
 import org.koin.plugin.module.dsl.viewModel
 
 private fun createSettings(): Settings = Settings()
 
-private fun createDb(driver: DatabaseDriverFactory) : AppDatabase = AppDatabase(driver.create())
+private fun createDb(driver: DatabaseDriverFactory): AppDatabase = AppDatabase(driver.create())
 
 val dataModule = module {
     single { create(::createSettings) } binds arrayOf(Settings::class, ObservableSettings::class)
@@ -36,4 +38,6 @@ val appModule = module {
     single<Platform>()
     single<AboutRepository>()
     viewModel<AboutViewModel>()
+    single<RemindersRepository>()
+    viewModel<RemindersViewModel>()
 }

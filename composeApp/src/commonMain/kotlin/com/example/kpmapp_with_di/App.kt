@@ -10,8 +10,6 @@ import com.example.kpmapp_with_di.ui.theme.AppTheme
 @Preview
 fun App() {
     AppTheme {
-        initKoin();
-
         AppScaffold()
     }
 }

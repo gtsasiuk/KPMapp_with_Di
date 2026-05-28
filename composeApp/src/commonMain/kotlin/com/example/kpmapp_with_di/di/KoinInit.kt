@@ -1,9 +1,13 @@
 package com.example.kpmapp_with_di.di
 
+import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
+import org.koin.dsl.KoinAppDeclaration
+import org.koin.dsl.includes
 
-fun initKoin() {
-    startKoin {
+fun initKoin(config: KoinAppDeclaration? = null): KoinApplication {
+    return startKoin {
+        includes(config)
         modules(appModule)
     }
 }
