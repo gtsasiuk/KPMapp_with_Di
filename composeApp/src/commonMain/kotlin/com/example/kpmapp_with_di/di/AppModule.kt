@@ -1,7 +1,11 @@
 package com.example.kpmapp_with_di.di
 
+import com.example.kpmapp_with_di.AppDatabase
 import com.example.kpmapp_with_di.data.about.AboutRepository
 import com.example.kpmapp_with_di.data.about.Platform
+import com.example.kpmapp_with_di.data.common.db.DatabaseDriverFactory
+import com.example.kpmapp_with_di.data.common.db.DbDataSource
+import com.example.kpmapp_with_di.data.common.db.LocalDataSource
 import com.example.kpmapp_with_di.data.common.preferences.AppPreferences
 import com.example.kpmapp_with_di.data.common.preferences.Preferences
 import com.example.kpmapp_with_di.ui.about.AboutViewModel
@@ -17,9 +21,14 @@ import org.koin.plugin.module.dsl.viewModel
 
 private fun createSettings(): Settings = Settings()
 
+private fun createDb(driver: DatabaseDriverFactory) : AppDatabase = AppDatabase(driver.create())
+
 val dataModule = module {
     single { create(::createSettings) } binds arrayOf(Settings::class, ObservableSettings::class)
     singleOf(::AppPreferences) bind Preferences::class
+    single<DatabaseDriverFactory>()
+    single { create(::createDb) }
+    singleOf(::DbDataSource) bind LocalDataSource::class
 }
 
 val appModule = module {
