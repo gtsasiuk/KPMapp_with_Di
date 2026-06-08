@@ -65,4 +65,19 @@ internal class RemindersViewModel(
             }
         }
     }
+
+    fun deleteReminder(id: Long) {
+        logger.d { "Deleting reminder id=$id" }
+
+        viewModelScope.launch {
+            try {
+                repository.deleteReminder(id)
+                _state.value = repository.reminders
+
+                logger.i { "Reminder deleted" }
+            } catch (e: Exception) {
+                logger.e(e) { "Failed to delete reminder" }
+            }
+        }
+    }
 }

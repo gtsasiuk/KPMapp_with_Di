@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,8 +41,11 @@ internal fun RemindersScreen(
 
     logger.d { "Recomposing with ${reminders.size} reminders" }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
         Toolbar(onUpButtonClick = onUpButtonClick)
+
         RemindersContent(
             reminders = reminders,
             textFieldValue = textFieldValue,
@@ -51,7 +55,13 @@ internal fun RemindersScreen(
                 textFieldValue = ""
             },
             onItemClick = { reminder ->
-                viewModel.markReminder(reminder.id, !reminder.isCompleted)
+                viewModel.markReminder(
+                    reminder.id,
+                    !reminder.isCompleted
+                )
+            },
+            onDeleteClick = { reminder ->
+                viewModel.deleteReminder(reminder.id)
             }
         )
     }
@@ -59,11 +69,17 @@ internal fun RemindersScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun Toolbar(onUpButtonClick: () -> Unit) {
+private fun Toolbar(
+    onUpButtonClick: () -> Unit
+) {
     TopAppBar(
-        title = { Text("Reminders") },
+        title = {
+            Text("Reminders")
+        },
         navigationIcon = {
-            IconButton(onClick = onUpButtonClick) {
+            IconButton(
+                onClick = onUpButtonClick
+            ) {
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back"
@@ -79,19 +95,36 @@ private fun RemindersContent(
     textFieldValue: String,
     onValueChange: (String) -> Unit,
     onSubmit: () -> Unit,
-    onItemClick: (Reminder) -> Unit
+    onItemClick: (Reminder) -> Unit,
+    onDeleteClick: (Reminder) -> Unit
 ) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(items = reminders, key = { it.id }) { reminder ->
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+        items(
+            items = reminders,
+            key = { it.id }
+        ) { reminder ->
+
             ReminderItem(
                 title = reminder.title,
                 isCompleted = reminder.isCompleted,
+                onDeleteClick = {
+                    onDeleteClick(reminder)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onItemClick(reminder) }
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
+                    .clickable {
+                        onItemClick(reminder)
+                    }
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 4.dp
+                    )
             )
         }
+
         item {
             NewReminderTextField(
                 value = textFieldValue,
@@ -99,7 +132,10 @@ private fun RemindersContent(
                 onSubmit = onSubmit,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                    .padding(
+                        vertical = 8.dp,
+                        horizontal = 16.dp
+                    )
             )
         }
     }
@@ -109,30 +145,48 @@ private fun RemindersContent(
 private fun ReminderItem(
     title: String,
     isCompleted: Boolean,
+    onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start,
+        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
     ) {
-        Checkbox(
-            checked = isCompleted,
-            onCheckedChange = null
-        )
-        Text(
-            text = title,
-            style = if (isCompleted) {
-                MaterialTheme.typography.bodyLarge.copy(
-                    textDecoration = TextDecoration.LineThrough,
-                    fontStyle = FontStyle.Italic,
-                    color = Color.Gray
-                )
-            } else {
-                MaterialTheme.typography.bodyLarge
-            },
-            modifier = Modifier.padding(8.dp)
-        )
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
+        ) {
+
+            Checkbox(
+                checked = isCompleted,
+                onCheckedChange = null
+            )
+
+            Text(
+                text = title,
+                style = if (isCompleted) {
+                    MaterialTheme.typography.bodyLarge.copy(
+                        textDecoration = TextDecoration.LineThrough,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.Gray
+                    )
+                } else {
+                    MaterialTheme.typography.bodyLarge
+                },
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+
+        IconButton(
+            onClick = onDeleteClick
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete reminder"
+            )
+        }
     }
 }
 
@@ -146,20 +200,26 @@ private fun NewReminderTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        placeholder = { Text("Add a new reminder here") },
+        placeholder = {
+            Text("Add a new reminder here")
+        },
         keyboardOptions = KeyboardOptions.Default.copy(
             capitalization = KeyboardCapitalization.Words,
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Done
         ),
         keyboardActions = KeyboardActions(
-            onDone = { onSubmit() }
+            onDone = {
+                onSubmit()
+            }
         ),
         modifier = modifier.onPreviewKeyEvent { event: KeyEvent ->
             if (event.key == Key.Enter) {
                 onSubmit()
                 true
-            } else false
+            } else {
+                false
+            }
         }
     )
 }
